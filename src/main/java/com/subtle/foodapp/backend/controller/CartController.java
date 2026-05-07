@@ -1,26 +1,26 @@
 package com.subtle.foodapp.backend.controller;
 
+import com.subtle.foodapp.backend.dto.AddToCartRequest;
 import com.subtle.foodapp.backend.entity.Cart;
 import com.subtle.foodapp.backend.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
 
-    @Autowired
-    private CartService service;
+    private final CartService service;
+
+    public CartController(CartService service) {
+        this.service = service;
+    }
 
     @PostMapping("/add")
-    public Cart addToCart(
-            @RequestParam Long userId,
-            @RequestParam Long foodId,
-            @RequestParam Integer qty) {
+    public ResponseEntity<Cart> addToCart(
+            @RequestBody AddToCartRequest dto) {
 
-        return service.addToCart(userId, foodId, qty);
+        return ResponseEntity.ok(service.addToCart(dto));
     }
 }

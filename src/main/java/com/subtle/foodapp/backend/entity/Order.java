@@ -3,6 +3,8 @@ package com.subtle.foodapp.backend.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -16,6 +18,8 @@ public class Order {
 
     private Double totalAmount;
     private String status;
+    private LocalDateTime orderTime;
+
 
     @ManyToOne
     private User user;
