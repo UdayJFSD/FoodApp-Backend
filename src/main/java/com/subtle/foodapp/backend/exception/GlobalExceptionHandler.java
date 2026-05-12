@@ -1,5 +1,6 @@
 package com.subtle.foodapp.backend.exception;
 
+import com.subtle.foodapp.backend.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,15 +13,18 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleNotFound(
+    public ResponseEntity<ApiResponse<Object>> handleNotFound(
             ResourceNotFoundException ex) {
 
-        Map<String, String> error = new HashMap<>();
-
-        error.put("message", ex.getMessage());
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(error);
+                .body(response);
     }
 
     @ExceptionHandler(Exception.class)

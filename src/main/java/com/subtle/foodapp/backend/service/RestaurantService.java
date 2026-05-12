@@ -5,6 +5,9 @@ import com.subtle.foodapp.backend.entity.Restaurant;
 import com.subtle.foodapp.backend.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +33,21 @@ public class RestaurantService {
         return repo.save(restaurant);
     }
 
-    public List<Restaurant> getAll() {
-        return repo.findAll();
+    public Page<Restaurant> getAll(
+            int page,
+            int size) {
+
+        Pageable pageable =
+                PageRequest.of(page, size);
+
+        return repo.findAll(pageable);
+    }
+
+    public List<Restaurant> search(String keyword) {
+
+        return repo.findByNameContainingIgnoreCase(
+                keyword
+        );
     }
 }
 
