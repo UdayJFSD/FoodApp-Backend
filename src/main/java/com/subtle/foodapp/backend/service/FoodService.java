@@ -8,6 +8,7 @@ import com.subtle.foodapp.backend.repository.FoodItemRepository;
 import com.subtle.foodapp.backend.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,8 +44,19 @@ public class FoodService {
         return foodRepo.save(item);
     }
 
-    public List<FoodItem> getMenu(Long restaurantId) {
+    @Cacheable(
+            value = "menus",
+            key = "#restaurantId"
+    )
+    public List<FoodItem> getMenu(
+            Long restaurantId) {
 
-        return foodRepo.findByRestaurantId(restaurantId);
+        System.out.println(
+                "Fetching MENU from DATABASE..."
+        );
+
+        return foodRepo.findByRestaurantId(
+                restaurantId
+        );
     }
 }

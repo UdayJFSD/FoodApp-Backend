@@ -4,6 +4,9 @@ import com.subtle.foodapp.backend.dto.RestaurantRequest;
 import com.subtle.foodapp.backend.entity.Restaurant;
 import com.subtle.foodapp.backend.response.ApiResponse;
 import com.subtle.foodapp.backend.service.RestaurantService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Restaurant APIs",
+        description = "Manage restaurants")
 @RestController
 @RequestMapping("/api/restaurants")
 public class RestaurantController {
@@ -21,6 +26,23 @@ public class RestaurantController {
         this.service = service;
     }
 
+    @Operation(
+            summary = "Create restaurant",
+            description = "Creates a new restaurant"
+    )
+
+    @ApiResponses(value = {
+
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Restaurant created"
+            ),
+
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "403",
+                    description = "Access denied"
+            )
+    })
     @PostMapping
     public ResponseEntity<ApiResponse<Restaurant>> create(
             @Valid @RequestBody RestaurantRequest dto) {

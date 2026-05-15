@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  mysql-db:
+    image: mysql:8
+    container_name: mysql-db
+
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: foodapp
+
+    ports:
+      - "3307:3306"
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      timeout: 20s
+      retries: 10
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  redis-cache:
+    image: redis:7
+    container_name: redis-cache
+
+    restart: always
+
+    ports:
+      - "6379:6379"
+
+  foodapp-backend:
+    build: .
+    container_name: foodapp-backend
+
+    restart: always
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/foodapp
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+      SPRING_REDIS_HOST: redis-cache
+      SPRING_REDIS_PORT: 6379
+
+volumes:
+  mysql-data:

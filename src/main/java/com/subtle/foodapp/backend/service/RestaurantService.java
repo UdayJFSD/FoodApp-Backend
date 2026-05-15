@@ -4,10 +4,9 @@ import com.subtle.foodapp.backend.dto.RestaurantRequest;
 import com.subtle.foodapp.backend.entity.Restaurant;
 import com.subtle.foodapp.backend.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,9 +21,15 @@ public class RestaurantService {
         this.repo = repo;
     }
 
-    public Restaurant create(RestaurantRequest dto) {
+    @CacheEvict(
+            value = "restaurants",
+            allEntries = true
+    )
+    public Restaurant create(
+            RestaurantRequest dto) {
 
-        Restaurant restaurant = new Restaurant();
+        Restaurant restaurant =
+                new Restaurant();
 
         restaurant.setName(dto.getName());
         restaurant.setLocation(dto.getLocation());
@@ -33,14 +38,14 @@ public class RestaurantService {
         return repo.save(restaurant);
     }
 
-    public Page<Restaurant> getAll(
-            int page,
-            int size) {
+    @Cacheable("restaurants")
+    public Page<Restaurant> getAll(int page, int size) {
 
-        Pageable pageable =
-                PageRequest.of(page, size);
+        System.out.println(
+                "Fetching from DATABASE..."
+        );
 
-        return repo.findAll(pageable);
+        return (Page<Restaurant>) repo.findAll();
     }
 
     public List<Restaurant> search(String keyword) {
